@@ -11,7 +11,11 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+**VibeFinder 1.0** is my version: a small, fully explainable content-based
+recommender. You give it a taste profile (favorite genre, favorite mood, target
+energy, and whether you like acoustic music), and it scores all 18 songs in the
+catalog, then returns the top 5 with a plain-language reason for each pick. It
+runs from the command line via `python -m src.main`.
 
 ---
 
@@ -266,15 +270,16 @@ more.
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
+- **Tiny catalog.** Only 18 songs, and some genres have just one track, so those
+  tastes can never get a strong list.
+- **Genre can override everything.** A flat +2.0 for a genre match can return the
+  opposite of what a user asked for (see the "Impossible Lofi" edge case).
+- **Exact-match only.** Genre and mood give points only on an exact string match,
+  so "chill" earns nothing for a "relaxed" song even though they feel similar.
+- **No deeper understanding.** It does not know lyrics, language, artist
+  similarity, or real listening history — it only compares the numbers I gave it.
 
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+Full detail is in the [Model Card](model_card.md) (sections 6 and 8).
 
 ---
 
