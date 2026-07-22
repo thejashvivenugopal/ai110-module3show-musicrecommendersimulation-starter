@@ -2,60 +2,63 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**VibeFinder 1.0**
+
+A tiny, explain-everything music recommender.
 
 ---
 
-## 2. Intended Use  
+## 2. Goal / Task
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+VibeFinder suggests songs that match a person's stated taste. You give it a
+favorite genre, a favorite mood, and a target energy level. It looks through the
+song catalog and returns the top 5 songs that fit best. Every suggestion comes
+with a plain reason so you can see *why* it was picked. It tries to predict which
+songs you would enjoy right now based on how close each song is to your taste.
 
 ---
 
-## 3. How the Model Works  
+## 3. Algorithm Summary
 
-Explain your scoring approach in simple language.  
+Think of it as a small points contest for each song:
 
-Prompts:  
+- A song earns **+2.0 points** if its genre matches your favorite genre.
+- It earns **+1.0 point** if its mood matches your favorite mood.
+- It earns up to **+1.5 points** for having energy close to your target. The
+  closer the match, the more points — a big gap earns almost nothing.
+- If you say you like acoustic music, a calm, acoustic song earns a small
+  **+0.5 bonus**.
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+Every song gets a total score, and the system sorts them from highest to lowest
+and shows the top 5. The main change from the starter code is that energy is
+scored by *closeness* (how near it is to what you want) instead of just rewarding
+louder or quieter songs.
 
 ---
 
-## 4. Data  
+## 4. Data Used
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+- **18 songs** in the catalog, stored in `data/songs.csv`.
+- Each song has: genre, mood, energy, tempo, valence, danceability, and
+  acousticness.
+- The starter file had 10 songs; I added 8 to cover more variety, reaching
+  **15 genres** (pop, lofi, rock, ambient, jazz, synthwave, indie pop, hip-hop,
+  edm, classical, r&b, metal, country, reggae, folk) and **12 moods**.
+- **Limits:** it is still tiny and hand-made. Some genres have only one song, so
+  those tastes cannot be served well. There is no real listening history, no
+  lyrics, and no language or artist-similarity information.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+- It works well for **clear, consistent tastes**. When genre, mood, and energy
+  all point the same way (like "High-Energy Pop" or "Chill Lofi"), the top
+  results feel right.
+- The **explanations are honest** — you can always see exactly which rule earned
+  the points, which makes the system easy to trust and debug.
+- It correctly separates **opposite vibes**: intense rock and chill lofi never
+  get confused for each other.
 
 ---
 
@@ -120,25 +123,48 @@ favorite genre is worth so much that a mismatched mood can't push it down far.
 
 ---
 
-## 8. Future Work  
+## 8. Intended Use and Non-Intended Use
 
-Ideas for how you would improve the model next.  
+**Intended use:** VibeFinder is a classroom project for learning how recommender
+systems turn data into ranked suggestions. It is meant for exploring scoring
+rules and seeing how weights change results.
 
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+**Not intended for:** real users or production apps. It should not be used to
+make important decisions, to judge what music is "good," or as a real music
+service. With only 18 songs and no real listening data, it cannot represent real
+musical taste, and its genre bias would treat some users unfairly.
 
 ---
 
-## 9. Personal Reflection  
+## 9. Ideas for Improvement
 
-A few sentences about your experience.  
+1. **Rebalance genre vs. energy** so a strong numeric preference can override a
+   genre match, fixing the "Impossible Lofi" filter-bubble problem.
+2. **Add fuzzy category matching** so similar moods (like "chill" and "relaxed")
+   give partial credit instead of all-or-nothing.
+3. **Grow and balance the catalog** so every genre has several songs, and add
+   diversity to the top 5 so it is not all one artist or genre.
 
-Prompts:  
+---
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+## 10. Personal Reflection  
+
+My biggest learning moment was watching the "Impossible Lofi" test. I asked for
+high energy but got the quietest songs in the catalog. That one result made the
+idea of "weights" click — a single number (genre = +2.0) can quietly control the
+whole outcome. It taught me that a recommender's behavior lives in its numbers,
+not just its code.
+
+AI tools helped me move fast: brainstorming features, generating new songs for
+the dataset, and drafting the scoring logic. But I had to double-check them. For
+example, the AI's suggested import broke when I ran the app as a module, and I
+had to verify the math and the returned data shapes matched what the tests
+expected. The AI was a strong first-draft partner, but I stayed the one deciding
+the logic.
+
+What surprised me most was how a handful of simple `if` statements and one
+distance formula could produce lists that genuinely *feel* like recommendations.
+There is no machine learning here at all, yet the explanations make it feel
+smart. If I kept going, I would add fuzzy mood matching and let the system learn
+weights from which songs a user actually keeps, so it improves over time instead
+of following fixed rules.

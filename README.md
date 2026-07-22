@@ -280,14 +280,20 @@ You will go deeper on this in your model card.
 
 ## Reflection
 
-Read and complete `model_card.md`:
+Full reflection is in the [**Model Card**](model_card.md) (section 10).
 
-[**Model Card**](model_card.md)
+Building this showed me that a recommender turns data into predictions by scoring
+every item against a user's preferences and ranking the results — no machine
+learning required. A few `if` statements plus one distance formula for energy
+were enough to produce lists that genuinely feel like recommendations, because
+the explanations make the logic feel intentional.
 
-Write 1 to 2 paragraphs here about what you learned:
-
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+It also made bias concrete. Because a genre match is worth a flat +2.0, my system
+can hand a user the *opposite* of what they asked for (see the "Impossible Lofi"
+test) just because the genre label matched. That is exactly where unfairness
+creeps into real systems: a single fixed weight, or an imbalanced dataset where
+some genres have only one song, quietly decides who gets good recommendations and
+who does not.
 
 
 
