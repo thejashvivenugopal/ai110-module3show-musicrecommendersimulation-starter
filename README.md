@@ -268,6 +268,51 @@ more.
 
 ---
 
+## Stretch Features
+
+Running `python -m src.main` also demonstrates four extra features. The AI-assisted
+workflow behind them is logged in [ai_interactions.md](ai_interactions.md).
+
+**1. Extra song attributes.** Each song also has `popularity`, `release_decade`,
+`instrumentalness`, `language`, and `duration_sec`. A profile can opt into these
+(`prefer_popular`, `target_decade`, `prefer_instrumental`) and the scoring rewards
+them — e.g. the "Trendy Instrumental" profile earns `popularity boost`,
+`decade match`, and `instrumental pick` points.
+
+**2. Formatted results table** (via `tabulate`, with an ASCII fallback):
+
+```
+=== High-Energy Pop (mode=balanced) ===
++---+----------------+---------------+-----------+--------+-------+-----------------------------------------------------------------------------+
+| # | Title          | Artist        | Genre     | Energy | Score | Reasons                                                                     |
++---+----------------+---------------+-----------+--------+-------+-----------------------------------------------------------------------------+
+| 1 | Sunrise City   | Neon Echo     | pop       | 0.82   | 4.46  | genre match (pop, +2.0); mood match (happy, +1.0); energy closeness (+1.46) |
+| 2 | Gym Hero       | Max Pulse     | pop       | 0.93   | 3.38  | genre match (pop, +2.0); energy closeness (+1.38)                           |
+| 3 | Rooftop Lights | Indigo Parade | indie pop | 0.76   | 2.37  | mood match (happy, +1.0); energy closeness (+1.36)                          |
++---+----------------+---------------+-----------+--------+-------+-----------------------------------------------------------------------------+
+```
+
+**3. Multiple ranking modes (Strategy pattern).** Four switchable strategies —
+`balanced`, `genre-first`, `mood-first`, `energy-similarity` — change what the
+recommender weighs. Same profile, different mode:
+
+```
+mode=genre-first : 1. Sunrise City (5.49)  2. Gym Hero (4.46)      # genre dominates
+mode=mood-first  : 1. Sunrise City (5.49)  2. Rooftop Lights (4.46)  # mood pulls indie pop up
+mode=energy-sim  : 1. Sunrise City (2.91)  2. Concrete Kings (2.85)  # genre/mood ignored
+```
+
+**4. Diversity / fairness (artist penalty).** With `diversity=True`, a repeated
+artist is penalized so the top list is not dominated by one artist. For Chill
+Lofi, "Focus Flow" (same artist as "Midnight Coding") drops 3.92 → 2.92:
+
+```
+diversity=OFF: 2. Midnight Coding (LoRoom, 4.89)  3. Focus Flow (LoRoom, 3.92)
+diversity=ON : 2. Midnight Coding (LoRoom, 4.89)  3. Focus Flow (LoRoom, 2.92)  # artist repeat penalty (-1.0)
+```
+
+---
+
 ## Limitations and Risks
 
 - **Tiny catalog.** Only 18 songs, and some genres have just one track, so those

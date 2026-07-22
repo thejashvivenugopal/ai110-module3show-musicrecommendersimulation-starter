@@ -41,6 +41,10 @@ louder or quieter songs.
 - **18 songs** in the catalog, stored in `data/songs.csv`.
 - Each song has: genre, mood, energy, tempo, valence, danceability, and
   acousticness.
+- **Stretch attributes added:** popularity (0–100), release_decade,
+  instrumentalness (0–1), language, and duration. These let a user ask for
+  popular, recent, or instrumental music, and the scoring rewards them when
+  requested.
 - The starter file had 10 songs; I added 8 to cover more variety, reaching
   **15 genres** (pop, lofi, rock, ambient, jazz, synthwave, indie pop, hip-hop,
   edm, classical, r&b, metal, country, reggae, folk) and **12 moods**.
@@ -147,7 +151,29 @@ musical taste, and its genre bias would treat some users unfairly.
 
 ---
 
-## 10. Personal Reflection  
+## 10. Stretch Features
+
+- **Extra attributes.** Songs now also carry popularity, release decade,
+  instrumentalness, language, and duration. Users can opt into scoring on these
+  (e.g., "popular, 2020s, instrumental").
+- **Ranking modes (Strategy pattern).** Four switchable strategies — `balanced`,
+  `genre-first`, `mood-first`, and `energy-similarity` — let the user change what
+  the recommender cares about most.
+- **Diversity / fairness — artist penalty.** When diversity mode is on, a song by
+  an artist that already appears higher in the list loses points (−1.0 per
+  earlier appearance) and the list is re-ranked. This directly fights the
+  **filter bubble**: without it, the Chill Lofi list stacks two songs from the
+  same artist (LoRoom) near the top; with it, one of them steps aside so a
+  different artist can appear. It makes the results fairer by spreading exposure
+  across more artists instead of over-rewarding whoever happens to match best.
+- **Visual table.** Results print as a formatted table (tabulate, with an ASCII
+  fallback) showing the score and the reasons together, improving transparency.
+
+See `ai_interactions.md` for the AI-assisted workflow behind these.
+
+---
+
+## 11. Personal Reflection  
 
 My biggest learning moment was watching the "Impossible Lofi" test. I asked for
 high energy but got the quietest songs in the catalog. That one result made the
