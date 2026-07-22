@@ -164,13 +164,103 @@ Top 5 recommendations for genre=pop, mood=happy, energy=0.8:
 
 ---
 
+## Multi-Profile Evaluation
+
+Output of `python -m src.main`, which runs five profiles — three normal tastes
+and two adversarial (self-contradicting) edge cases.
+
+```
+=== Profile: High-Energy Pop ===
+prefs: {'genre': 'pop', 'mood': 'happy', 'energy': 0.85}
+
+1. Sunrise City — Neon Echo  (score: 4.46)  genre=pop, mood=happy, energy=0.82
+   Because: genre match (pop, +2.0); mood match (happy, +1.0); energy closeness (+1.46)
+2. Gym Hero — Max Pulse  (score: 3.38)  genre=pop, mood=intense, energy=0.93
+   Because: genre match (pop, +2.0); energy closeness (+1.38)
+3. Rooftop Lights — Indigo Parade  (score: 2.37)  genre=indie pop, mood=happy, energy=0.76
+   Because: mood match (happy, +1.0); energy closeness (+1.36)
+4. Concrete Kings — Blockprint  (score: 1.43)  genre=hip-hop, mood=energetic, energy=0.8
+   Because: energy closeness (+1.43)
+5. Storm Runner — Voltline  (score: 1.41)  genre=rock, mood=intense, energy=0.91
+   Because: energy closeness (+1.41)
+
+=== Profile: Chill Lofi ===
+prefs: {'genre': 'lofi', 'mood': 'chill', 'energy': 0.35, 'likes_acoustic': True}
+
+1. Library Rain — Paper Lanterns  (score: 5.00)  genre=lofi, mood=chill, energy=0.35
+   Because: genre match (lofi, +2.0); mood match (chill, +1.0); energy closeness (+1.50); acoustic pick (+0.5)
+2. Midnight Coding — LoRoom  (score: 4.89)  genre=lofi, mood=chill, energy=0.42
+   Because: genre match (lofi, +2.0); mood match (chill, +1.0); energy closeness (+1.40); acoustic pick (+0.5)
+3. Focus Flow — LoRoom  (score: 3.92)  genre=lofi, mood=focused, energy=0.4
+   Because: genre match (lofi, +2.0); energy closeness (+1.42); acoustic pick (+0.5)
+4. Spacewalk Thoughts — Orbit Bloom  (score: 2.90)  genre=ambient, mood=chill, energy=0.28
+   Because: mood match (chill, +1.0); energy closeness (+1.40); acoustic pick (+0.5)
+5. Coffee Shop Stories — Slow Stereo  (score: 1.97)  genre=jazz, mood=relaxed, energy=0.37
+   Because: energy closeness (+1.47); acoustic pick (+0.5)
+
+=== Profile: Deep Intense Rock ===
+prefs: {'genre': 'rock', 'mood': 'intense', 'energy': 0.9}
+
+1. Storm Runner — Voltline  (score: 4.48)  genre=rock, mood=intense, energy=0.91
+   Because: genre match (rock, +2.0); mood match (intense, +1.0); energy closeness (+1.48)
+2. Gym Hero — Max Pulse  (score: 2.46)  genre=pop, mood=intense, energy=0.93
+   Because: mood match (intense, +1.0); energy closeness (+1.46)
+3. Neon Warehouse — Pulse Theory  (score: 1.43)  genre=edm, mood=energetic, energy=0.95
+   Because: energy closeness (+1.43)
+4. Iron Verdict — Ashfall  (score: 1.38)  genre=metal, mood=aggressive, energy=0.98
+   Because: energy closeness (+1.38)
+5. Sunrise City — Neon Echo  (score: 1.38)  genre=pop, mood=happy, energy=0.82
+   Because: energy closeness (+1.38)
+
+=== Profile: Loud Sad (edge) — genre=metal, mood=melancholy, energy=0.95 ===
+
+1. Iron Verdict — Ashfall  (score: 3.46)  genre=metal, mood=aggressive, energy=0.98
+   Because: genre match (metal, +2.0); energy closeness (+1.46)
+2. Neon Warehouse — Pulse Theory  (score: 1.50)  genre=edm, mood=energetic, energy=0.95
+   Because: energy closeness (+1.50)
+3. Gym Hero — Max Pulse  (score: 1.47)  genre=pop, mood=intense, energy=0.93
+   Because: energy closeness (+1.47)
+4. Storm Runner — Voltline  (score: 1.44)  genre=rock, mood=intense, energy=0.91
+   Because: energy closeness (+1.44)
+5. Winter Nocturne — Clara Wynn  (score: 1.41)  genre=classical, mood=melancholy, energy=0.22
+   Because: mood match (melancholy, +1.0); energy closeness (+0.41)
+
+=== Profile: Impossible Lofi (edge) — genre=lofi, mood=energetic, energy=0.9, likes_acoustic=False ===
+
+1. Midnight Coding — LoRoom  (score: 2.78)  genre=lofi, mood=chill, energy=0.42
+   Because: genre match (lofi, +2.0); energy closeness (+0.78)
+2. Focus Flow — LoRoom  (score: 2.75)  genre=lofi, mood=focused, energy=0.4
+   Because: genre match (lofi, +2.0); energy closeness (+0.75)
+3. Library Rain — Paper Lanterns  (score: 2.67)  genre=lofi, mood=chill, energy=0.35
+   Because: genre match (lofi, +2.0); energy closeness (+0.67)
+4. Neon Warehouse — Pulse Theory  (score: 2.42)  genre=edm, mood=energetic, energy=0.95
+   Because: mood match (energetic, +1.0); energy closeness (+1.43)
+5. Concrete Kings — Blockprint  (score: 2.35)  genre=hip-hop, mood=energetic, energy=0.8
+   Because: mood match (energetic, +1.0); energy closeness (+1.35)
+```
+
+---
+
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+**Experiment: weight shift — double energy, halve genre.**
+I temporarily set `ENERGY_WEIGHT = 3.0` and `GENRE_MATCH_POINTS = 1.0` (from
+1.5 and 2.0), then reverted after observing the effect.
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+- **Impossible Lofi** (wants `energy=0.9` but `genre=lofi`) flipped completely.
+  Under the default recipe the top 3 were low-energy lofi tracks (energy
+  0.35–0.42); under the experiment the top 5 became the *highest*-energy songs in
+  the catalog (Neon Warehouse 0.95, Gym Hero 0.93, Storm Runner 0.91). Energy now
+  wins the tug-of-war against genre.
+- **High-Energy Pop** kept Sunrise City at #1 (it matches everything), but the
+  ranking below it tilted toward raw energy.
+
+**Verdict:** the change made results *different, not universally more accurate*.
+It fixed the contradictory edge case (honoring the stated energy) but weakened
+the intuitive normal profiles, where matching the favorite genre is genuinely
+what a user expects. This is why the finalized recipe keeps genre at +2.0 — the
+right weight depends on whether you trust the user's genre label or their numbers
+more.
 
 ---
 
